@@ -1,0 +1,22 @@
+package ch09;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.List;
+
+public class StudentDAO {
+	Connection conn = null;
+	PreparedStatement pstmt;
+
+	final String JDBC_DRIVER = "org.h2.Driver";
+	final String JDBC_URL = "jdbc:h2:tcp://localhost/~/KrongNewProject4.0";
+
+	public List<Student> getAll() {
+		
+		return null;
+	}
+
+	public void insert(Student s) {
+		
+	}
+}

@@ -1,0 +1,58 @@
+package ch09;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class StudentDAO {
+	Connection conn = null;
+	PreparedStatement pstmt;
+
+	final String JDBC_DRIVER = "org.h2.Driver";
+	final String JDBC_URL = "jdbc:h2:tcp://localhost/~/KrongNewProject4.0";
+
+	// DB locking 상태 open()
+	public void open() {
+		try {
+			Class.forName(JDBC_DRIVER);
+			conn = DriverManager.getConnection(JDBC_URL, "krong", "1234");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	// locking 상태 close()
+	public void close() {
+		try {
+			pstmt.close();
+			conn.close();
+			// SQL에서 발생하는 오류 trace & print
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void insert() {
+		
+	}
+	
+	public List<Student> getAll() {
+		open();
+		List<Student> students = new ArrayList<>();
+		
+		try {
+			
+		} catch {
+			
+		}
+	}
+
+	
+
+	public void insert(Student s) {
+
+	}
+}

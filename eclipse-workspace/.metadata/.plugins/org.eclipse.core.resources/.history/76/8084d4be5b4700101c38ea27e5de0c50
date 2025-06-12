@@ -1,0 +1,123 @@
+package ch09;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class StudentDAO {
+	Connection conn = null;
+	// SQL을 JDBC에서 처리할 수 있는 객체 pstmt
+	PreparedStatement pstmt;
+
+	//
+	final String JDBC_DRIVER = "org.h2.Driver";
+	final String JDBC_URL = "jdbc:h2:tcp://localhost/~/KrongNewProject4.0";
+
+	// DB locking 상태 open() : 연결상태
+	public void open() {
+		System.out.println("[StudentDAO] open() 메서드 시작");
+
+		try {
+			Class.forName(JDBC_DRIVER);
+			System.out.println("[StudentDAO] H2 JDBC Driver 로드 성공.");
+
+			conn = DriverManager.getConnection(JDBC_URL, "krong", "1234");
+			System.out.println("[StudentDAO] 데이터베이스 연결 성공.");
+
+		} catch (Exception e) {
+			System.err.println("[StudentDAO] 데이터베이스 연결 실패! 오류: " + e.getMessage());
+
+			e.printStackTrace();
+		}
+	}
+
+	// locking 상태 close() : 종료상태
+	public void close() {
+		System.out.println("[StudentDAO] close() 메서드 시작");
+
+		try {
+			if (pstmt != null) {
+				pstmt.close();
+				System.out.println("[StudentDAO] ResultSet 닫힘.");
+
+			}
+			// SQL에서 발생하는 오류 trace & print
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			if (rs != null) {
+				rs.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			if (conn != null) {
+				conn.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void insert(Student s) {
+		System.out.println("[StudentDAO] insert() 메서드 시작");
+
+		open();
+		String sql = "INSERT INTO student(username, univ, birth, email) values(?,?,?,?)";
+
+		try {
+			if(conn == null) {
+				System.err.println("[StudentDAO] insert: Connection이 NULL입니다. 삽입 불가.");
+				return; // 연결이 없으면 더 이상 진행하지 않음
+			}
+			// pstmt 객체로 sql과 연결
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, s.getUsername());
+			pstmt.setString(2, s.getUniv());
+			pstmt.setDate(3, s.getBirth());
+			pstmt.setString(4, s.getEmail());
+
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+	}
+
+	// DB에 있는 DATA 전부 가져오기 타입 : List
+	public List<Student> getAll() {
+		System.out.println("[StudentDAO] getAll() 메서드 시작");
+
+		open();
+		List<Student> students = new ArrayList<>();
+
+		try {
+			pstmt = conn.prepareStatement("select * from student");
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				Student s = new Student();
+				s.setId(rs.getInt("id"));
+				s.setUsername(rs.getString("username"));
+				s.setUniv(rs.getString("univ"));
+				s.setBirth(rs.getDate("birth"));
+				s.setEmail(rs.getString("email"));
+
+				students.add(s);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+
+		return students;
+	}
+}

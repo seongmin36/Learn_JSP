@@ -14,28 +14,43 @@ public class StudentController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	StudentDAO dao;
 
-    public StudentController() {
-        super();
-        dao = new StudentDAO();
-    }
-    
-    @Override
-	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	String action = request.getParameter("action");
-    	String view="";
-    	
-    	if(action == null) {
-    		getServletContext().getRequestDispatcher("/studentControl?action=list")
-    		.forward(request, response);
-    	} else {
-    		switch(action) {
-    		case "list" : view = list(request, response); break;
-    		case "insert" : view = insert(request, response); break;
-    		}
-    		// studentInfo.jsp의 위치
-    		getServletContext().getRequestDispatcher("/StudentUnivInfo/"+view)
-    		.forward(request, response);
-    	}
+	public StudentController() {
+		super();
+		dao = new StudentDAO();
+	}
+
+	@Override
+	protected void service(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// POST 요청시 한글깨짐 방지
+		request.setCharacterEncoding("UTF-8");
+		
+		String action = request.getParameter("action");
+		String view = "";
+
+		// 디버깅을 위한 로그 추가
+		System.out.println("[Controller] service() 시작. action: " + (action == null ? "null" : action));
+		if (action == null) {
+			getServletContext().getRequestDispatcher("/studentControl?action=list").forward(request, response);
+			System.out.println("[Controller] action이 null이므로 'list' 액션으로 기본 설정.");
+
+		} else {
+			switch (action) {
+			case "list":
+				System.out.println("[Controller] 'list' 액션 처리.");
+				view = list(request, response);
+				break;
+			case "insert":
+				System.out.println("[Controller] 'insert' 액션 처리.");
+				view = insert(request, response);
+				break;
+			default:
+				System.out.println("[Controller] 알 수 없는 액션: " + action + ". 'list' 액션으로 기본 처리.");
+
+			}
+			// studentInfo.jsp의 위치
+			getServletContext().getRequestDispatcher("/StudentUnivInfo/" + view).forward(request, response);
+		}
 	}
 
 	private String list(HttpServletRequest request, HttpServletResponse response) {
@@ -45,7 +60,7 @@ public class StudentController extends HttpServlet {
 
 	private String insert(HttpServletRequest request, HttpServletResponse response) {
 		Student s = new Student();
-		
+
 		try {
 			BeanUtils.populate(s, request.getParameterMap());
 		} catch (Exception e) {

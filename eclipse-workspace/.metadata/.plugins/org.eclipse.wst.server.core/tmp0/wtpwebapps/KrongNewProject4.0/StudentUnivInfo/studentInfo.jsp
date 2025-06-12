@@ -20,15 +20,14 @@
 			<th scope="col">대학</th>
 			<th scope="col">생일</th>
 			<th scope="col">이메일</th>
-			<div>${students == null}</div>
 		</tr>
 		<c:forEach var="s" items="${students}">
 			<tr>
-				<td>id</td>
-				<td>name</td>
-				<td>univ</td>
-				<td>birth</td>
-				<td>email</td>
+				<td>${s.id}</td>
+				<td>${s.username}</td>
+				<td>${s.univ}</td>
+				<td>${s.birth}</td>
+				<td>${s.email}</td>
 			</tr>
 		</c:forEach>
 	</table>
@@ -43,5 +42,22 @@
 			type="email" name="email"><br>
 		<button type="submit">등록</button>
 	</form>
+	<!-- 서버 연결상태 확인 -->
+	<!-- <script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const serverCheckUrl = "/KrongNewProject4.0/studentControl?action=list";
+			fetch(serverCheckUrl)
+			.then(response => {
+				if (response.ok) { 
+					console.log("🟢 서버와 성공적으로 연결되었습니다. (HTTP Status: " + response.status + ")");
+				} else {
+					console.error("🔴 서버 연결에 문제가 발생했습니다. (HTTP Status: " + response.status + ")");
+				}
+			})
+			.catch(error => {
+				console.error("❌ 서버에 연결할 수 없습니다. 네트워크 오류 또는 서버가 오프라인입니다.", error);
+			});
+	});
+	</script>  -->
 </body>
 </html>
